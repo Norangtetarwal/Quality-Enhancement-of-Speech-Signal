@@ -183,39 +183,148 @@ signal. This is also valid for zero tapered windows.To regain the complete signa
 <div style="display: flex; justify-content: center;">
 								<img src="Theory/STFT4.PNG" alt="STFT" align="middle">
 				</div> </p>
+			
+			
 						</font><!-- Stop edit here -->
 
 					</div>
 				</div>
 				
 				<div class="subsection">
-					<div class="heading"><p style="font-size:20px;">2.2</p></div>
+					<div class="heading"><p style="font-size:20px;">2.2 Wiener-filter
+</p></div>
 					<div class="text">
 
 						<!-- Start edit here  -->
-						<font size="+0.1%"> 
+						<font size="+0.1%"> <p> The Wiener filter suppress additive noise by comparing the noisy signal with an estimated
+noiseless signal. The filter is derived from the performance criterion of Minimum Mean
+Square Error (MMSE), and takes the following form in the frequency domain:
+							<div style="display: flex; justify-content: center;">
+								<img src="Theory/Wienerfilter.PNG" alt="STFT" align="middle">
+								</div>
+							</p>
+						<p>where ω is the continuous frequency [4]. SX(ω) is the energy density spectrum of the
+noiseless signal, and SD(ω) is the energy density spectrum of the noise.
+						<div style="display: flex; justify-content: center;">
+								<img src="Theory/Wienerfilter2.PNG" alt="STFT" align="middle">
+								</div></p>
 						</font><!-- Stop edit here -->
 
 					</div>
 				</div>
 				
 				<div class="subsection">
-					<div class="heading"><p style="font-size:20px;">2.3</p></div>
+					<div class="heading"><p style="font-size:20px;">2.3 Stationary Noise Reduction</p></div>
 					<div class="text">
 
 						<!-- Start edit here  -->
-						<font size="+0.1%"> 
+						<font size="+0.1%"> <p> There are three basic suppression rules. The principle is transformed into the discrete domain by substituting the continuous
+frequency variable, ω with the discrete frequency variable, k. This gives a pseudo-Wiener filter solution.
+							<div style="display: flex; justify-content: center;">
+								<img src="Theory/NoiseSup1.PNG" alt="STFT" align="middle">
+							</div></p>
+							<p><div style="display: flex; justify-content: center;">
+								<img src="Theory/NoiseSup2.PNG" alt="STFT" align="middle">
+							</div></p>
+							<p><div style="display: flex; justify-content: center;">
+								<img src="Theory/NoiseSup3.PNG" alt="STFT" align="middle">
+							</div></p>
+						
+							
+
 						</font><!-- Stop edit here -->
 
 					</div>
 				</div>
 				
 				<div class="subsection">
-					<div class="heading"><p style="font-size:20px;">2.4</p></div>
+					<div class="heading"><p style="font-size:20px;">2.4 Noise Spectrum Estimation</p></div>
 					<div class="text">
 
 						<!-- Start edit here  -->
-						<font size="+0.1%"> 
+						<font size="+0.1%"> <p> The noise print may vary over a longer period than one frame. To get a good estimate
+the noise print is partitioned with the same window function, frame- and step size as the
+noise reduction process. To estimate the spectrum from the DFT components the Fourier
+transform is done as well. The spectrums are then averaged. When the STFT with overlap
+is used to compute an averaged power spectrum, it is often called Welch’s method.
+Typical averaging methods are the arithmetic mean, Root Mean Square (RMS) and maxima.
+							<div style="display: flex; justify-content: center;">
+								<img src="Theory/Noise1.PNG" alt="STFT" align="middle">
+							</div></p>
+						<p><div style="display: flex; justify-content: center;">
+								<img src="Theory/Noise2.PNG" alt="STFT" align="middle">
+							</div></p>
+						</p>
+						
+						</font><!-- Stop edit here -->
+
+					</div>
+				</div>
+				
+				
+			</div>
+
+
+					</div>
+				</div>
+				
+				<div class="subsection">
+					<div class="heading"><p style="font-size:20px;">2.5 The Ephraim-Malah Suppression Rule
+</p></div>
+					<div class="text">
+
+						<!-- Start edit here  -->
+						<font size="+0.1%"> <p> The basic suppression rules can result in some annoying artifacts called musical noise. This
+occurs when the estimated noise spectrum mismatch the noisy data, leaving peaks at random
+frequencies. To suppress this we need a smoothing effect in our suppression rule. The smoothing
+effect is implemented by analyzing both the current and previous restored frame, combining
+them in a feedback topology. The EMSR is derived with a performance criterion of
+MMSE, based on modeling speech and noise as independent random Gaussian variables.
+The restored phase is shown to be the same as in the noisy audio. We skip the derivation
+and head straight for the good stuff.
+The EMSR as defined by Cappé :
+							<div style="display: flex; justify-content: center;">
+								<img src="Theory/ESMR1.PNG" alt="STFT" align="middle">
+							</div></p>
+						<p> Rpost is the a posteriori SNR at each frequency bin. In other words the SNR of the latest
+frame. Rprio is the a priori SNR, weighted between the previous and latest frame. M(θ)
+stems from a confluent hypergeometric function.
+							<div style="display: flex; justify-content: center;">
+								<img src="Theory/ESMR2.PNG" alt="STFT" align="middle">
+							</div></p>
+							
+					<p> p denotes the frame number. The definition by Cappé introduce a new parameter, α
+(0 ≤ α ≤ 1). The parameter acts as a weighting factor, controlling the amount of feedback.
+As α approaches 1 the SNR of the previous restored frame dominates. P(x) ensures zero or
+positive output. The EMSR is derived with the assumption that the signal is always present. The suppression
+rule can be further expanded to include the probability of signal absence, q(k). This
+includes a new definition of Rprio.
+
+						<div style="display: flex; justify-content: center;">
+								<img src="Theory/ESMR3.PNG" alt="STFT" align="middle">
+							</div></p>
+
+<p> where the new R(0)prio replace all the previous instances of Rprio. A likelihood ratio, Λ is
+defined to modify the original EMSR.
+	<div style="display: flex; justify-content: center;">
+								<img src="Theory/ESMR4.PNG" alt="STFT" align="middle">
+							</div></p>
+
+<p>where µ is defined as:
+	<div style="display: flex; justify-content: center;">
+								<img src="Theory/ESMR5.PNG" alt="STFT" align="middle">
+							</div></p>
+
+<p> Finally, the modified EMSR is:
+	<div style="display: flex; justify-content: center;">
+								<img src="Theory/ESMR6.PNG" alt="STFT" align="middle">
+							</div></p>
+<p> We've used a Buterworth Filter at the end to fine-tune our output even further and get an even purer Denoised Output.
+
+
+	
+
+
 						</font><!-- Stop edit here -->
 
 					</div>
