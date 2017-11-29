@@ -163,6 +163,26 @@ analyzing each frame as a stationary part using the Fourier transform. The discr
 								<img src="Theory/STFT1.PNG" alt="STFT" align="middle">
 								</div>
 </p>
+						<p>We invert the STFT using an Overlap-Add (OLA) method. First each frame has to be
+inverse transformed. <div style="display: flex; justify-content: center;">
+								<img src="Theory/STFT2.PNG" alt="STFT" align="middle">
+								</div></p>
+					
+					<p> x(n) is now recognized as the chopped up overlapping sections abbreviated xp(l).
+gcorr(l) is a gain correction function to reverse the amplitude modifications done by the
+overlap and windowing. 
+					<div style="display: flex; justify-content: center;">
+								<img src="Theory/STFT3.PNG" alt="STFT" align="middle">
+								</div>
+					</p>
+				<p>With less than 50% overlap the inverse window is used. This is only applicable for the
+Hamming window or other non zero tapered windows. With 50% or more overlap the
+signal has been amplified (almost uniformly depending on window type) by the window
+integral, or discrete sum, divided by the step size. The inverse is used to scale down the
+signal. This is also valid for zero tapered windows.To regain the complete signal the overlapping sections are added together.
+<div style="display: flex; justify-content: center;">
+								<img src="Theory/STFT4.PNG" alt="STFT" align="middle">
+				</div> </p>
 						</font><!-- Stop edit here -->
 
 					</div>
