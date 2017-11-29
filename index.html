@@ -485,8 +485,21 @@ Typical averaging methods are the arithmetic mean, Root Mean Square (RMS) and ma
 					<div class="text">
 
 						<!-- Start edit here  --><font size="+0.1%">
-						A de-hissing tool were created with MATLAB and proved to be very powerful. We were
-						able to reduce noise in speech signals by a significant amount.</font>
+						<p>A Speech Quality Enhancement tool was created with MATLAB which was greatly efficient. We were
+able to reduce noise in old noisy audio recordings by a significant amount. Some
+basic and state of the art noise reduction algorithms were successfully realized. The EMSR
+algorithm gave the most advanced results, although the basic spectral
+subtraction methods also gave a satisfactory result but with less complexity. 
+We built a solid framework around the STFT.</p> 
+
+<p>The program is easily expandable to support
+more algorithms. Noise reduction by STFT approach proved to be a
+massive research field with all its algorithms and parameters. We can use various types of Noises along with White 
+Gaussian Noise because the method applied compares the Noise Spectral Density with the noisy signal.</p>
+
+<p>We learnt the applications of various DSP techniques like FFT, STFT, Weiner filter, Butterworth Filter 
+studied in our course.</p> 
+</font>
 						</font><!-- Stop edit here -->
 
 					</div>
@@ -496,7 +509,18 @@ Typical averaging methods are the arithmetic mean, Root Mean Square (RMS) and ma
 					<div class="text">
 
 						<!-- Start edit here  --><font size="+0.1%">
-						The program is expandable to support
+						<p>Here, We have done the analysis using only White Gaussian Noise. Many other tests can be performed using other types of examples, where a clean audio source
+is contaminated by a random noise generating process. Also more window functions could be tested.</p>
+ 
+<p>In theory, higher resolution would give more precise spectrum estimations, that could help differentiate noise and good audio.
+Some other suppression rules have been proposed. Ephraim and Malah proposed a logspectral EMSR. There are also other suppression rules proposed
+by Wolfe and Godsill. A modification to improve the EMSR’s transient distortion is also proposed and called the W2 modification.</p> 
+
+<p>Another good implementation would be a noise gate in between the noise suppressor
+and noise floor generator. The noise gate could probably do some of the noise removal that
+the low pass filter now does, but without making the signal less attractive as it appears that the output obtained is somewhat like suppressed. 
+On the other hand a noise gate could be preferred in a restoration environment.</p>
+
 						more algorithms.</font>
 						<!-- Stop edit here -->
 
