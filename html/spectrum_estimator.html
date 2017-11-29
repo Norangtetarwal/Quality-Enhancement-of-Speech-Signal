@@ -1,0 +1,202 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>spectrum_estimator</title><meta name="generator" content="MATLAB 9.2"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2017-11-29"><meta name="DC.source" content="spectrum_estimator.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="comment">% SPECTRUM ESTIMATOR OS THE GIVEN NOISE SIGNALS</span>
+
+ <span class="keyword">function</span> new_spectrum = spectrum_estimator(dn, window_function, M, algorithm,averaging)
+ <span class="comment">%spectrum_estimator estimates the spectrum of the given Noisy signal using</span>
+ <span class="comment">%Short time Fourier transform , and various  Algorithms.</span>
+
+ <span class="comment">% 'window_function' is a window function describing a frame of size 'L'. 'M' is the</span>
+ <span class="comment">% length of Size between two successive frames. 'algorithm' gives the type of</span>
+ <span class="comment">% estimation method which we are using like 'fft','AR-Model'</span>
+ <span class="comment">% 'averaging' gives the averaging process of different frames.</span>
+ <span class="comment">% 'max' (maximum noise amplitudes)</span>
+ <span class="comment">% 'mean' (arithmetic mean)</span>
+ <span class="comment">% 'rms' (root mean square)</span>
+ <span class="comment">% 'new_spectrum' is the resulting spectrum of size 'L'.</span>
+
+ L = length(window_function);
+
+ <span class="keyword">if</span> strcmpi(algorithm, <span class="string">'welch'</span>)
+    new_spectrum = pwelch(dn, window_function, (L-M), <span class="string">'twosided'</span>);
+    new_spectrum = sum(window_function)^2/norm(window_function)^2 * new_spectrum; <span class="comment">%pwelch scale</span>
+ <span class="keyword">else</span>
+
+ N = length(dn);
+ dn = [zeros(L,1); dn; zeros((ceil(N/L)*L - N) + L, 1)]; <span class="comment">%zero padding</span>
+ N = length(dn); <span class="comment">%update length</span>
+
+ new_spectrum = zeros(L, 1); <span class="comment">% Padding of zeros Initially at all the points</span>
+
+ <span class="keyword">for</span> n = 1:M:N-(L-M) <span class="comment">%n is the signal sample index</span>
+
+    dn_frame = window_function .* dn(n:n+L-1);
+
+    <span class="keyword">switch</span> algorithm
+        <span class="keyword">case</span> <span class="string">'fft'</span>
+            Dk = fft(dn_frame);
+
+
+        <span class="keyword">otherwise</span>
+            disp(<span class="string">'Error: no recognizable choice of algorithm.'</span>)
+            <span class="keyword">break</span>;
+    <span class="keyword">end</span>
+
+    <span class="keyword">switch</span> averaging
+        <span class="keyword">case</span> <span class="string">'max'</span>
+
+            i = abs(Dk) &gt; abs(new_spectrum);
+            new_spectrum(i) = Dk(i);
+
+        <span class="keyword">case</span> <span class="string">'mean'</span>
+            new_spectrum = (new_spectrum + Dk) / 2;
+
+        <span class="keyword">case</span> <span class="string">'rms'</span>
+            new_spectrum = sqrt((new_spectrum.^2 + Dk.^2) / 2);
+
+        <span class="keyword">otherwise</span>
+            disp(<span class="string">'Error: no recognizable choice of averaging method.'</span>)
+            <span class="keyword">break</span>;
+    <span class="keyword">end</span>
+
+ <span class="keyword">end</span>
+
+ <span class="keyword">end</span>
+
+ <span class="keyword">end</span>
+</pre><pre class="codeoutput error"> 
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2017a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+ 
+% SPECTRUM ESTIMATOR OS THE GIVEN NOISE SIGNALS
+
+ function new_spectrum = spectrum_estimator(dn, window_function, M, algorithm,averaging)
+ %spectrum_estimator estimates the spectrum of the given Noisy signal using
+ %Short time Fourier transform , and various  Algorithms.
+ 
+ % 'window_function' is a window function describing a frame of size 'L'. 'M' is the
+ % length of Size between two successive frames. 'algorithm' gives the type of
+ % estimation method which we are using like 'fft','AR-Model'
+ % 'averaging' gives the averaging process of different frames.
+ % 'max' (maximum noise amplitudes)
+ % 'mean' (arithmetic mean)
+ % 'rms' (root mean square)
+ % 'new_spectrum' is the resulting spectrum of size 'L'.
+
+ L = length(window_function);
+
+ if strcmpi(algorithm, 'welch')
+    new_spectrum = pwelch(dn, window_function, (L-M), 'twosided');
+    new_spectrum = sum(window_function)^2/norm(window_function)^2 * new_spectrum; %pwelch scale
+ else
+
+ N = length(dn);
+ dn = [zeros(L,1); dn; zeros((ceil(N/L)*L - N) + L, 1)]; %zero padding
+ N = length(dn); %update length
+
+ new_spectrum = zeros(L, 1); % Padding of zeros Initially at all the points
+
+ for n = 1:M:N-(L-M) %n is the signal sample index
+
+    dn_frame = window_function .* dn(n:n+L-1);
+
+    switch algorithm
+        case 'fft'
+            Dk = fft(dn_frame);
+
+        
+        otherwise
+            disp('Error: no recognizable choice of algorithm.')
+            break;
+    end
+
+    switch averaging
+        case 'max'
+
+            i = abs(Dk) > abs(new_spectrum);
+            new_spectrum(i) = Dk(i);
+
+        case 'mean'
+            new_spectrum = (new_spectrum + Dk) / 2;
+
+        case 'rms'
+            new_spectrum = sqrt((new_spectrum.^2 + Dk.^2) / 2);
+
+        otherwise
+            disp('Error: no recognizable choice of averaging method.')
+            break;
+    end
+
+ end
+
+ end
+
+ end
+##### SOURCE END #####
+--></body></html>
